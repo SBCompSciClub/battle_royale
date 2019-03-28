@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Battle Royale Login</title>
+		<script src="/socket.io/socket.io.js"></script>
+	</head>
+	<body>
+		<div id="page_container">
+			...
+		</div>
+		<div id="script_container">
+			...
+		</div>
+		<script>
+
+let socket = io();
+let page = document.querySelector("#page_container");
+let scripts = document.querySelector("#script_container");
+let c = null, log = null, f = null, keyList = [], loop = null;
+
+let draw = function(){}
+let gamedata = null;
+let field = null;
+
+socket.on('location_change', (data)=>{
+	page.innerHTML = parseLocationData(data.loc, data.data);	
+	let s = document.createElement('script');
+	s.src = `/${data.loc}.js`;
+	scripts.innerHTML = "";
+	scripts.appendChild(s);
+});
+
+socket.on('location_update', (data)=>{
+	//alert('received');
+	switch(data.loc){
+		case 'lobby':
+			page.innerHTML = parseLocationData(data.loc, data.data);
+			break;
+		case 'game':
+			gamedata = data;
+			break;
+		default: break;
+	}
+});
+
+
+function parseLocationData(loc, data){
+	let list = [];
+	switch(loc){
+		case 'login':
+			return ` 
+		<p>
+			<textarea type="text" id="nameIn">Player JSON here</textarea>
+			<br />
+			<button type="button">Join</button>
+		</p>
+`;
+			break;	
+		case 'lobby':
+			list = "<h1>Lobby</h1><ul>";
+			field = data.shift();
+			for(let name of data){
+				list += `<li>${name}</li>`
+			}
+			list += "</ul>";
+			return list;
+			break;
+		case 'game':
+			return '<canvas width="600" height="600" id="gameField"></canvas><p id="dataLog">...</p>';
+			break;
+		case 'waiting':
+			list = "<h1>Waiting Room</h1><ul>";
+			for(let name of data){
+				list += `<li>${name}</li>`
+			}
+			list += "</ul>";
+			return list;
+			break;
+		case 'winner':
+			let output = "<h1>Victory!</h1>";
+			for(let name of data){
+				output += `<p>${name}</p>`;
+			}
+			return output;
+		default:
+			break;
+	}
+}
+
+		</script>
+	</body>
+</html>
