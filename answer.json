@@ -1,0 +1,21 @@
+{
+"name": "Bob",
+"width": 60,
+"height": 50,
+"color": "#F000FF",
+"maxSpeed": 10,
+"friction": 0.9,
+"maxHP": 100,
+"strength": 20,
+"defense": 30,
+"acceleration": 1,
+"ability": null,
+"recharge": 30,
+"shotData": {
+"width": 10,
+"height": 10,
+"color": "#0000FF",
+"speed": 15,
+"power": 60
+}
+}
