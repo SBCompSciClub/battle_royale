@@ -9,7 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "console.log('hi')"
+    "test": "console.log('hi')",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
