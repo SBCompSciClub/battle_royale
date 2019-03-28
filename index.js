@@ -26,7 +26,7 @@ let winners = [];
 
 let reader = readline.createInterface(process.stdin, process.stdout);
 reader.on('line', (line)=>{
-	if(io.sockets.adapter.rooms['lobby'] !== undefined && 
+	if(io.sockets.adapter.rooms['lobby'] !== undefined &&
 		io.sockets.adapter.rooms['lobby'].length > 1 && state === 0 && line === "start"){
 		state = 1;
 		for(let [key, entry] of players.entries()){
@@ -50,7 +50,7 @@ reader.on('line', (line)=>{
 		game.initialize(players);
 	} else {
 		console.log("Invalid input");
-	}	
+	}
 });
 
 function serverLoop(){
@@ -79,7 +79,7 @@ function serverLoop(){
 		winners = [];
 		for(let id of game.players.keys()){
 			broadcastLocationUpdate('game', io.sockets.connected[id], players.get(id).visuals);
-		}	
+		}
 		if(game.survivors === 2){
 			for(let player of game.players.values()){
 				if(!player.gone){
@@ -106,7 +106,7 @@ function serverLoop(){
 			for(let id of game.players.keys()){
 				players.get(id).loc = 'winner';
 				broadcastLocationChange(io.sockets.connected[id]);
-			}	
+			}
 		}
 	} else {
 		clearInterval(loop);
@@ -122,7 +122,7 @@ function broadcastLocationChange(socket){
 	let player = players.get(socket.id);
 	socket.leaveAll();
 	socket.join(player.loc);
-	socket.emit('location_change', 
+	socket.emit('location_change',
 		{loc: player.loc, data: pageData.get(player.loc)});
 }
 
@@ -138,13 +138,55 @@ function broadcastLocationUpdate(loc, socket=null, info=null){
 	}
 }
 
+function filter(data) {
+	if(data.width < 20)
+		data.width = 20;
+	if(data.width > 60)
+		data.width = 60;
+
+	if(data.height < 20)
+		data.height = 20;
+	if(data.height > 60)
+		data.height = 60;
+
+	if(data.maxSpeed > 13)
+		data.maxSpeed = 13;
+
+	if(data.maxHP + data.strength + data.defense > 300)
+	{
+		data.maxHP = 1;
+		data.strength = 1;
+		data.defense = 1;
+	}
+
+	if(data.shotData.width < 5)
+		data.shotData.width = 5;
+	if(data.shotData.width > 20)
+		data.shotData.width = 30;
+
+	if(data.shotData.height < 5)
+		data.shotData.height = 5;
+	if(data.shotData.height > 20)
+		data.shotData.height = 20;
+
+	data.shotData.power = Math.abs(data.shotData.power);
+
+	if(data.shotData.speed + data.shotData.power > 80)
+	{
+		data.shotData.speed = 100;
+		data.shotData.power = 0;
+	}
+
+	return data;
+}
+
 io.on('connection', (socket)=>{
 	console.log('User connected');
 	players.set(socket.id, {loc: 'login', player: null, visuals: [], drawDistance: 400});
 	broadcastLocationChange(socket);
-	
+
 	socket.on('new_user', (data)=>{
-		players.get(socket.id).player = data;
+		players.get(socket.id).player = filter(data);
 		if(state === 0){
 			pageData.get('lobby').push(data.name);
 		} else {
