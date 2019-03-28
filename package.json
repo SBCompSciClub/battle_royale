@@ -1,0 +1,30 @@
+{
+  "name": "battle_royale",
+  "version": "1.0.0",
+  "description": "Battle Royale Game wiht JSON",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "console.log('hi')"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SBCompSciClub/battle_royale.git"
+  },
+  "keywords": [
+    "battle",
+    "royale",
+    "json",
+    "game"
+  ],
+  "author": "Rajat Peddinti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SBCompSciClub/battle_royale/issues"
+  },
+  "homepage": "https://github.com/SBCompSciClub/battle_royale#readme"
+}
