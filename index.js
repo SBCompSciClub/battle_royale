@@ -195,6 +195,36 @@ io.on('connection', (socket)=>{
 		socket.emit('user_accepted', state);
 		//console.log(players);
 	});
+	/////////////////////////////////
+	
+	socket.on('start_request', (line)=>{
+	if(io.sockets.adapter.rooms['lobby'] !== undefined &&
+		io.sockets.adapter.rooms['lobby'].length > 1 && state === 0 && line === "start"){
+		state = 1;
+		for(let [key, entry] of players.entries()){
+			if(entry.loc !== 'login'){
+				entry.loc = 'game';
+			}
+			broadcastLocationChange(io.sockets.connected[key]);
+		}
+		winners = [];
+		game.initialize(players);
+		let loop = setInterval(serverLoop, 1000/30);
+	} else if(players.size > 1 && state === 2 && line === "restart"){
+		state = 1;
+		for(let [key, entry] of players.entries()){
+			if(entry.loc !== 'login'){
+				entry.loc = 'game';
+			}
+			broadcastLocationChange(io.sockets.connected[key]);
+		}
+		winners = [];
+		game.initialize(players);
+	} else {
+		console.log("Invalid input");
+	}
+});
+	/////////////////////////////////
 	socket.on('request_location_change', (loc)=>{
 		players.get(socket.id).loc = loc;
 		broadcastLocationChange(socket);
