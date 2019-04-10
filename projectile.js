@@ -31,7 +31,7 @@ class Projectile{
 					this.y < player.y + player.h &&
 					this.y + this.h > player.y){
 					this.gone = true;
-					player.shotTimer = player.recharge;
+					//player.shotTimer = player.recharge;
 					player.hp -= Math.round(this.strength*this.power/player.defense);
 				}
 			}
